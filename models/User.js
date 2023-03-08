@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 
 const bcrypt = require('bcryptjs')
 
@@ -45,8 +46,19 @@ UserSchema.pre('save', async function (next) {
     user.password = hashedPassword
     next()
 })
+//create  schema methods to create jwt token
+UserSchema.methods.createJwt = async function () {
+    const user = this
+    const token = jwt.sign({ userId: user._id, name: user.name }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFETIME })
+    return token
+}
+//compare the hashed password with the provided password when login
 
-
+UserSchema.methods.comparePassword = async function (loginPassword) {
+    const user = this
+    const isMatch = await bcrypt.compare(loginPassword, user.password)
+    return isMatch
+}
 
 
 module.exports = mongoose.model('User', UserSchema)

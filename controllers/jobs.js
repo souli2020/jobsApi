@@ -6,7 +6,7 @@ const getAllJobs = (req, res) => {
 }
 
 const createJob = (req, res) => {
-    res.status(StatusCodes.OK).send('create  jobs')
+    res.status(StatusCodes.OK).json(req.user)
 }
 const getJob = (req, res) => {
     res.status(StatusCodes.OK).send('get single job')
