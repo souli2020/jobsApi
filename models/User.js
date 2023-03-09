@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
-const bcrypt = require('bcryptjs')
+//const bcrypt = require('bcryptjs')
+const {hash, compare, genSalt) = require('brcryptjs')
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -34,14 +35,14 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', async function (next) {
     //point to th document using this keyword
     const user = this;
-    //only hash is password is modified
+    //only hash if password is modified
 
-    if (!user.isModified('password')) {
-        return next()
-    }
+//     if (!user.isModified('password')) {
+//         return next()
+//     }
 
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(user.password, salt)
+    const salt = await genSalt(10)
+    const hashedPassword = await hash(user.password, salt)
     //replace the text password
     user.password = hashedPassword
     next()
@@ -56,7 +57,7 @@ UserSchema.methods.createJwt = async function () {
 
 UserSchema.methods.comparePassword = async function (loginPassword) {
     const user = this
-    const isMatch = await bcrypt.compare(loginPassword, user.password)
+    const isMatch = await compare(loginPassword, user.password)
     return isMatch
 }
 
