@@ -5,7 +5,12 @@ const connectDB = require('./db/connect')
 const port = process.env.PORT || 3000
 
 const app = express()
-
+//extra security middleware
+const helmet = require('helmet')
+const xssClean = require('xss-clean')
+const cors = require('cors')
+const rateLimiter = require('express-rate-limit')
+//routes
 const authRouter = require('./routes/auth')
 const jobsRouter = require('./routes/jobs')
 const authentication = require('./middleware/authentification')
@@ -14,7 +19,9 @@ const notFoundMiddleware = require('./middleware/not-found')
 
 //middleware
 app.use(express.json())
-
+app.use(helmet())
+app.use(cors())
+app.use(xssClean())
 
 //routes
 
