@@ -9,7 +9,7 @@ const app = express()
 const helmet = require('helmet')
 const xssClean = require('xss-clean')
 const cors = require('cors')
-const rateLimiter = require('express-rate-limit')
+const rateLimit = require('express-rate-limit')
 //routes
 const authRouter = require('./routes/auth')
 const jobsRouter = require('./routes/jobs')
@@ -19,9 +19,14 @@ const notFoundMiddleware = require('./middleware/not-found')
 
 //middleware
 app.use(express.json())
+app.use(rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+}));
 app.use(helmet())
 app.use(cors())
 app.use(xssClean())
+
 
 //routes
 
